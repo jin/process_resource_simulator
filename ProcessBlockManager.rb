@@ -53,7 +53,7 @@ class ProcessBlockManager
   end
 
   def preempt(p)
-    @active_process.content.scheduler_run
+    p.content.scheduler_run
   end
 
   def init
@@ -78,7 +78,7 @@ class ProcessBlockManager
     # Linear search for any existing process with the same name
     unless process_exists?(name)
       p_node = spawn_child_process(name, priority)
-      @ready_list[priority] << p_node
+      move_to_ready_list(p_node)
     end
 
     scheduler
@@ -122,10 +122,7 @@ class ProcessBlockManager
     rid = args[0]
     requested_count = args[1].to_i
     unless @active_process.content.request_for(rid, requested_count)
-      @active_process.content.block
-      @blocked_list[@active_process.content.priority] << @active_process
-      @active_process.content.list = @blocked_list
-      @ready_list[@active_process.content.priority].delete(@active_process)
+      move_to_blocked_list(@active_process)
       $resource_manager.enqueue(rid, @active_process)
     end
     
@@ -138,6 +135,20 @@ class ProcessBlockManager
     @active_process.content.release_for(rid, released_count)
 
     scheduler
+  end
+
+  def move_to_blocked_list(p_node)
+    p_node.content.block
+    @blocked_list[p_node.content.priority] << p_node
+    p_node.content.list = @blocked_list
+    @ready_list[p_node.content.priority].delete(p_node)
+  end
+
+  def move_to_ready_list(p_node)
+    p_node.content.unblock
+    @ready_list[p_node.content.priority] << p_node
+    p_node.content.list = @ready_list
+    @blocked_list[p_node.content.priority].delete(p_node)
   end
 
   def get_name(args)
