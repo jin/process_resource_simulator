@@ -13,15 +13,18 @@ class ResourceBlockManager
   end
 
   def request(rid, count)
-    resource(rid).request(count)
+    response = resource(rid).request(count)
+    response
   end
 
   def release(rid, count)
-    resource(rid).release(count)
+    response = resource(rid).release(count)
+    resource(rid).check_waiting_list if response == :success
+    response
   end
 
-  def enqueue(rid, p_node)
-    resource(rid).waiting_list << p_node
+  def enqueue(rid, p_node, requested_count)
+    resource(rid).waiting_list << [p_node, requested_count]
   end
 
   def dequeue(rid, p_node)
@@ -32,10 +35,15 @@ class ResourceBlockManager
     @resource_pool[rid]
   end
 
+  def remove_from_waiting_lists(p_node)
+    @resource_pool.each do |k, v|
+      v.waiting_list.delete_if { |p| p.first == p_node }
+    end
+  end
 
   def show_resources
     @resource_pool.each do |k, v|
-      puts "#{k}: #{v.available_resource}, #{v.waiting_list.map { |p| p.name }}"
+      puts "#{k}: #{v.available_resource}, #{v.waiting_list.map { |p| p[0].name }}"
     end
   end
 

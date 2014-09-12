@@ -89,24 +89,33 @@ class ProcessBlockManager
 
     if @active_process.name == name
       @active_process.each do |child|
-        child.content.list.delete(child)
+        remove_from_all_lists(child)
       end
       @active_process.remove_all!
       @active_process.remove_from_parent!
+      @active_process.content.release_all_resources
+      $resource_manager.remove_from_waiting_lists(@active_process)
+
+      remove_from_all_lists(@active_process)
 
     elsif process_exists?(name)
-      p = get_process(name)
+      p_node = get_process(name)
       unless @active_process.parentage.include?(p)
-        p.each do |child|
-          child.content.list.delete(child)
+        p_node.each do |child|
+          remove_from_all_lists(child)
         end
 
-        p.remove_all!
-        p.remove_from_parent!
+        p_node.remove_all!
+        p_node.remove_from_parent!
+        p_node.content.release_all_resources
+        $resource_manager.remove_from_waiting_lists(p_node)
+
+        remove_from_all_lists(p_node)
       else 
         puts "Unable to destroy process in ancestors"
       end
     end
+
 
     scheduler
   end
@@ -121,12 +130,14 @@ class ProcessBlockManager
   def request_resource(args)
     rid = args[0]
     requested_count = args[1].to_i
-    unless @active_process.content.request_for(rid, requested_count)
+    response = @active_process.content.request_for(rid, requested_count)
+    if response == :failure 
       move_to_blocked_list(@active_process)
-      $resource_manager.enqueue(rid, @active_process)
+      $resource_manager.enqueue(rid, @active_process, requested_count)
     end
-    
+
     scheduler
+    puts "ERRORRRRR" if response == :error
   end
 
   def release_resource(args)
@@ -151,6 +162,11 @@ class ProcessBlockManager
     @blocked_list[p_node.content.priority].delete(p_node)
   end
 
+  def remove_from_all_lists(p_node)
+    @ready_list[p_node.content.priority].delete(p_node)
+    @blocked_list[p_node.content.priority].delete(p_node)
+  end
+
   def get_name(args)
     args[0].to_sym if args.length > 0
   end
@@ -160,11 +176,15 @@ class ProcessBlockManager
   end
 
   def process_exists?(p_name)
-    (@ready_list[1] + @ready_list[2]).any? { |p| p.name == p_name }
+    (@ready_list[1] + @ready_list[2] + @blocked_list[1] + @blocked_list[2]).any? do
+      |p| p.name == p_name 
+    end
   end
 
   def get_process(p_name)
-    (@ready_list[1] + @ready_list[2]).detect { |p| p.name == p_name }
+    (@ready_list[1] + @ready_list[2] + @blocked_list[1] + @blocked_list[2]).detect do
+      |p| p.name == p_name 
+    end
   end
 
   def spawn_child_process(name, priority) 
@@ -175,13 +195,15 @@ class ProcessBlockManager
   # Debug methods
 
   def show_ready_list
-    p "ready priority 2: #{@ready_list[2].collect { |p| [p.name, p.content.state] }}" 
-    p "ready priority 1: #{@ready_list[1].collect { |p| [p.name, p.content.state] }}" 
+    puts "ready priority 2: 
+#{@ready_list[2].collect { |p| [p.name, p.content.state, p.content.other_resources] }}" 
+    puts "ready priority 1: 
+#{@ready_list[1].collect { |p| [p.name, p.content.state, p.content.other_resources] }}" 
   end
 
   def show_blocked_list
-    p "blocked priority 2: #{@blocked_list[2].collect { |p| [p.name, p.content.state] }}" 
-    p "blocked priority 1: #{@blocked_list[1].collect { |p| [p.name, p.content.state] }}" 
+    puts "blocked priority 2: #{@blocked_list[2].collect { |p| [p.name, p.content.state] }}" 
+    puts "blocked priority 1: #{@blocked_list[1].collect { |p| [p.name, p.content.state] }}" 
   end
 
   def show_tree

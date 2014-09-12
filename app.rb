@@ -15,13 +15,13 @@ class App
   def loop
     ARGF.each do |line| 
       response = $process_manager.parse(line)
-      puts line
+      puts "Instruction: #{line}"
       puts "Context: #{$process_manager.active_process.name}" if response
-      puts
-
       $process_manager.show_ready_list
       $process_manager.show_blocked_list
+      $process_manager.show_tree
       $resource_manager.show_resources
+      puts "--------------"
     end 
   end
 end

@@ -71,15 +71,25 @@ class ProcessBlock
       self.send("#{key}=", value) if PROPERTIES.member? key
     }
 
+    @other_resources = {"R1" => 0, "R2" => 0, "R3" => 0, "R4" => 0}
     super() # Required to initialize states for state_machine
   end
 
+  def release_all_resources
+    @other_resources.each do |k, v|
+      release_for(k, v)
+    end
+  end
+
   def request_for(resource_name, requested_count)
-    $resource_manager.request(resource_name, requested_count)
+    response = $resource_manager.request(resource_name, requested_count)
+    self.other_resources[resource_name] += requested_count if response == :success
+    response
   end
 
   def release_for(resource_name, released_count)
-    $resource_manager.release(resource_name, released_count)
+    response = $resource_manager.release(resource_name, released_count) 
+    response
   end
 
 end

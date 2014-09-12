@@ -6,7 +6,7 @@ class ResourceBlock
 
   def initialize(capacity)
     @rid = "R#{capacity}"
-    @waiting_list = []
+    @waiting_list = [] # Contains pairs of p_nodes and their requested count
     @capacity = @status = capacity
   end
 
@@ -17,15 +17,32 @@ class ResourceBlock
   def request(requested_count)
     if available_resource - requested_count >= 0
       decrement(requested_count)
-    else false
+      :success
+    elsif requested_count > @capacity
+      :error
+    else
+      :failure
     end
   end
 
   def release(released_count)
     if available_resource + released_count <= capacity
       increment(released_count)
-      true
-    else false
+      :success
+    else 
+      :failure
+    end
+  end
+
+  def check_waiting_list
+    unless @waiting_list.empty?
+      p_node, requested_count = @waiting_list.first
+
+      if requested_count <= available_resource
+        @waiting_list.shift
+        $process_manager.move_to_ready_list(p_node)
+        p_node.content.request_for(@rid, requested_count)
+      end
     end
   end
 
