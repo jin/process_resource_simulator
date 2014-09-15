@@ -1,19 +1,22 @@
-cr x 1
-cr p 1
-cr q 1
-cr r 1
+cr A1 1
+cr B1 1
+cr C1 3
+cr A2 2
+req R1 2
+req R1 1
+req R1 1
+de A2
+req R1 1
 to
-req R2 1
+rel R2 2
+
+init
+cr x 2
+req R2 4
+
+init
+cr x 2
+cr y 2
+req R2 5
 to
-req R3 3
-to
-req R4 3
-to
-to
-req R3 1
-req R4 2
-req R2 2
-to
-de q
-to
-to
+rel R2 2

@@ -8,9 +8,13 @@ class ProcessBlockManager
   attr_accessor :ready_list, :blocked_list
   attr_accessor :root_process, :active_process
 
+  attr_accessor :has_error
+
   def initialize()
     super
+    @has_error = false
     init
+    print "init "
   end
 
   def parse(instruction)
@@ -24,6 +28,7 @@ class ProcessBlockManager
     when :to   then timeout
     when :req  then request_resource(args)
     when :rel  then release_resource(args)
+    else
     end
 
     true
@@ -76,10 +81,12 @@ class ProcessBlockManager
     name, priority = get_name(args), get_priority(args)
 
     # Linear search for any existing process with the same name
-    unless process_exists?(name)
+    if priority < 1 or priority > 2 or process_exists?(name)
+      @has_error = true
+    else
       p_node = spawn_child_process(name, priority)
       move_to_ready_list(p_node)
-    end
+    end 
 
     scheduler
   end
@@ -91,24 +98,25 @@ class ProcessBlockManager
       @active_process.each do |child|
         remove_from_all_lists(child)
       end
+
+      $resource_manager.remove_from_waiting_lists(@active_process)
+      @active_process.content.release_all_resources
       @active_process.remove_all!
       @active_process.remove_from_parent!
-      @active_process.content.release_all_resources
-      $resource_manager.remove_from_waiting_lists(@active_process)
 
       remove_from_all_lists(@active_process)
 
     elsif process_exists?(name)
       p_node = get_process(name)
-      unless @active_process.parentage.include?(p)
+      unless @active_process.parentage.include?(p_node)
         p_node.each do |child|
           remove_from_all_lists(child)
         end
 
+        $resource_manager.remove_from_waiting_lists(p_node)
+        p_node.content.release_all_resources
         p_node.remove_all!
         p_node.remove_from_parent!
-        p_node.content.release_all_resources
-        $resource_manager.remove_from_waiting_lists(p_node)
 
         remove_from_all_lists(p_node)
       else 
@@ -134,17 +142,19 @@ class ProcessBlockManager
     if response == :failure 
       move_to_blocked_list(@active_process)
       $resource_manager.enqueue(rid, @active_process, requested_count)
+    elsif response == :error
+      @has_error = true
     end
 
     scheduler
-    puts "ERRORRRRR" if response == :error
   end
 
   def release_resource(args)
     rid = args[0]
     released_count = args[1].to_i
-    @active_process.content.release_for(rid, released_count)
+    response = @active_process.content.release_for(rid, released_count)
 
+    @has_error = true if response == :failure
     scheduler
   end
 
