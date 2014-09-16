@@ -20,3 +20,72 @@ cr y 2
 req R2 5
 to
 rel R2 2
+
+init
+cr x 2
+req R5 3
+
+init
+cr x 2
+cr y 2
+req R1 1
+req R1 1
+req R1 1
+req R1 1
+de x
+
+init
+cr x 2
+cr x 1
+
+init
+req x 2
+rel y 2
+cr x -100
+cr init 2
+cr y 2
+cr z 2
+to
+de y
+de z
+de y
+cr x 2
+cr y 2
+req R4 5
+req R4 tsjd 
+cr x ds
+
+init
+cr x 2
+cr y 1
+to
+cr z 2
+to
+req R1 1
+to
+req R1 1
+de z
+rel R1 1
+de x
+
+init
+cr x 1
+cr p 1
+cr q 1
+cr r 1
+to
+req R2 2
+to
+req R3 2
+to
+req R4 1
+to
+to
+req R3 2
+req R4 4
+req R2 1
+to
+de q
+to
+to
+req R1 2

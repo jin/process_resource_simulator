@@ -1,7 +1,6 @@
 class ResourceBlock
   attr_accessor :rid, :waiting_list
   attr_reader :status
-
   attr_reader :capacity
 
   def initialize(capacity)

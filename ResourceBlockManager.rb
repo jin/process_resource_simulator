@@ -13,12 +13,11 @@ class ResourceBlockManager
   end
 
   def request(rid, count)
-    response = resource(rid).request(count)
-    response
+    resource(rid).nil? ? :error : resource(rid).request(count)
   end
 
   def release(rid, count)
-    response = resource(rid).release(count)
+    response = resource(rid).nil? ? :failure : resource(rid).release(count)
     resource(rid).check_waiting_list if response == :success
     response
   end
@@ -28,7 +27,7 @@ class ResourceBlockManager
   end
 
   def dequeue(rid, p_node)
-    resource(rid).waiting_list.shift
+    resource(rid).waiting_list.shift!
   end
 
   def resource(rid)
@@ -41,6 +40,7 @@ class ResourceBlockManager
     end
   end
 
+  # Debug
   def show_resources
     @resource_pool.each do |k, v|
       puts "#{k}: #{v.available_resource}, #{v.waiting_list.map { |p| p[0].name }}"
