@@ -8,6 +8,8 @@ class ProcessBlockManager
   attr_accessor :ready_list, :blocked_list
   attr_accessor :root_process, :active_process
 
+  # Used to inform app.rb to output "error" instead
+  # of a process name
   attr_accessor :has_error
 
   def initialize()
@@ -69,6 +71,12 @@ class ProcessBlockManager
 
   def init
     init_process = ProcessBlock.new(:name => :init, :priority => 0)
+
+    # Each Process object is wrapped witin a Tree::TreeNode object
+    # to enable tree-like properties.
+    # The process can be accessed by calling TreeNode#content, like such:
+    # process = @active_process.content
+    # @active_process.name #=> :init
     @active_process = @root_process = Tree::TreeNode.new(:init, init_process)
     @ready_list = { 0 => [@root_process], 1 => [], 2 => [] }
     @blocked_list = { 1 => [], 2 => [] }
