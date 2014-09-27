@@ -1,0 +1,352 @@
+cr x 1
+req R1 1
+req R1 1
+cr y 1
+req R1 1
+cr z 1
+req R1 1
+de x
+de y
+de z
+
+init
+cr w 1
+cr x 1
+cr y 1
+cr z 1
+to
+to
+de z
+
+init
+cr w 1
+cr x 1
+to
+cr y 1
+to
+de w
+cr x 1
+cr x 1
+
+init
+cr x 2
+cr y 1
+to
+cr z 2
+to
+req R1 1
+to
+req R1 1
+de z
+rel R1 1
+de x
+
+init
+cr x 1
+cr p 1
+cr q 1
+cr r 1
+to
+req R2 2
+to
+req R3 2
+to
+req R4 1
+to
+to
+req R3 2
+req R4 4
+req R2 1
+to
+de q
+to
+to
+req R1 2
+
+init
+cr x 2
+cr x 1
+
+init
+cr x 1
+req R4 2
+cr y 2
+rel R1 1
+
+init
+cr x 1
+req R4 0
+
+init
+cr d 2
+req R3 2
+rel R3 0
+
+init
+cr z 0
+
+init
+de init
+
+init
+cr x 1
+cr y 2
+de x
+
+init
+cr x 1
+cr p 1
+cr q 1
+cr r 1
+to
+req R2 1
+to
+req R3 3
+to
+req R4 3
+to
+to
+req R3 1
+req R4 2
+req R2 2
+to
+de q
+to
+to
+
+init
+cr x 1
+cr y 1
+de y
+de x
+
+init
+cr y 1
+cr x 2
+de x
+de y
+
+init
+cr x 1
+req R4 4
+cr z 1
+to
+req R4 1
+cr y 1
+to
+req R4 1
+rel R4 4
+to
+to
+
+init
+cr p1 1
+req R1 1
+to
+rel R1 1
+
+init
+to
+to
+cr x 1
+cr y 2
+cr z 2
+to
+req R4 4
+to
+req R4 2
+de y
+
+init
+cr x 1
+cr y 2
+cr z 2
+to
+req R4 4
+to
+req R4 2
+de z
+req R4 4
+
+init
+cr x 1
+cr y 1
+cr z 1
+cr u 1
+cr x 1
+
+init
+cr a 1
+cr b 1
+to
+req R2 2
+to
+req R2 1
+to
+cr c 2
+req R2 2
+to
+to
+rel R2 2
+
+init
+cr x 1
+cr y 1
+to
+cr z 1
+to
+de y
+cr z 2
+
+init
+cr p1 1
+req R4 4
+cr p2 1
+to
+cr p3 1
+to
+cr p4 1
+to
+cr p5 1
+to
+cr p6 1
+to
+req R4 4
+de p1
+
+init
+cr x 1
+req R4 4
+cr y 1
+to
+cr z 1
+cr z2 1
+req R4 1
+to
+to
+req R4 1
+to
+req R4 1
+de z
+
+init
+cr x 1
+req R3 3
+cr y 1
+to
+cr z 1
+to
+de y
+to
+cr z 2
+cr y 1
+to
+cr p1 2
+to
+cr p2 2
+to
+to
+cr p3 2
+to
+to
+to
+cr p4 1
+to
+req R3 1
+to
+req R4 4
+to
+to
+rel R3 3
+to
+de p4
+de p1
+
+init
+cr a 1
+cr b 1
+to
+req R2 2
+to
+req R2 1
+to
+cr c 2
+req R2 2
+rel R2 2
+to
+rel R2 2
+
+init
+cr z 1
+req R3 3
+cr x 2
+cr y 2
+to
+req R3 1
+req R3 3
+cr k 1
+rel R3 3
+cr u 2
+to
+req R3 2
+cr t 2
+to
+to
+to
+to
+de y
+de k
+
+init
+cr z 1
+cr pp 1
+to
+req R4 4
+req R3 3
+req R2 2
+req R1 1
+to
+cr p1 1
+cr p2 1
+cr p3 1
+cr p4 1
+to
+to
+to
+to
+to
+req R4 1
+to
+to
+to
+to
+req R3 1
+to
+to
+to
+req R2 1
+to
+to
+req R1 1
+to
+de pp
+to
+to
+to
+to
+
+init
+cr a 1
+req R3 1
+cr b 1
+req R3 1
+cr c 1
+req R3 1
+to
+to
+req R3 1
+to
+req R3 1
+rel R3 2
+to
+to

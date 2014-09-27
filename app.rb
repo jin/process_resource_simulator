@@ -23,7 +23,10 @@ class App
 
   def loop
     ARGF.each do |line|
+      # puts
+      # puts line
       line == "\n" ? print("\n\n") : display(process_input(line))
+      # show_debug_info
     end
 
     print "\n"
@@ -34,7 +37,11 @@ class App
   end
 
   def display(response)
-    message = response ? "#{$process_manager.active_process.name} " : "error "
+    if $process_manager.active_process
+      message = response ? "#{$process_manager.active_process.name} " : "error " 
+    else
+      message = "error "
+    end
     print message
   end
 

@@ -47,7 +47,7 @@ class ProcessBlockManager
 
     p = highest_ready_priority_process
 
-    if @active_process.content.priority < p.content.priority
+    if p and @active_process and @active_process.content.priority < p.content.priority
       @active_process.content.scheduler_ready
       @active_process = p
     elsif @active_process.content.state == "blocked"
@@ -66,7 +66,7 @@ class ProcessBlockManager
   end
 
   def preempt(p)
-    p.content.scheduler_run
+    p.content.scheduler_run if p
   end
 
   def init
@@ -104,8 +104,9 @@ class ProcessBlockManager
       remove_from_system(@active_process)
     elsif process_exists?(name)
       p_node = get_process(name)
-      if !@active_process.parentage.nil? and
-          @active_process.parentage.include?(p_node)
+      if (!@active_process.parentage.nil? and
+          @active_process.parentage.include?(p_node)) or 
+          !@active_process.children.include?(p_node)
         @has_error = true
       else
         remove_from_system(p_node)
@@ -155,7 +156,7 @@ class ProcessBlockManager
     released_count = args[1].to_i
     response = @active_process.content.release_for(rid, released_count)
 
-    @has_error = (response == :failure)
+    @has_error = (response == :failure) || released_count == 0
     scheduler
   end
 
@@ -174,8 +175,8 @@ class ProcessBlockManager
   end
 
   def remove_from_all_lists(p_node)
-    @ready_list[p_node.content.priority].delete(p_node)
-    @blocked_list[p_node.content.priority].delete(p_node)
+    @ready_list[p_node.content.priority].delete(p_node) if @ready_list[p_node.content.priority]
+    @blocked_list[p_node.content.priority].delete(p_node) if @blocked_list[p_node.content.priority]
   end
 
   def get_name(args)

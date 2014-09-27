@@ -87,6 +87,7 @@ class ProcessBlock
 
   def release_for(resource_name, released_count)
     response = $resource_manager.release(resource_name, released_count)
+    self.other_resources[resource_name] -= released_count if response == :success
     response
   end
 
